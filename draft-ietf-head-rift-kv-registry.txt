@@ -9,7 +9,7 @@ Expires: 26 August 2021                                 22 February 2021
 
 
       RIFT Keys Structure and Well-Known Registry in Key Value TIE
-                  draft-ietf-przygienda-kv-registry-01
+                  draft-ietf-head-rift-kv-registry-01
 
 Abstract
 
@@ -55,7 +55,7 @@ Copyright Notice
 
 Head & Przygienda        Expires 26 August 2021                 [Page 1]
 
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+Internet-Draft      draft-ietf-head-rift-kv-registry       February 2021
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -111,7 +111,7 @@ Table of Contents
 
 Head & Przygienda        Expires 26 August 2021                 [Page 2]
 
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+Internet-Draft      draft-ietf-head-rift-kv-registry       February 2021
 
 
 2.  Key-Value Pair Structure
@@ -167,7 +167,7 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
 Head & Przygienda        Expires 26 August 2021                 [Page 3]
 
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+Internet-Draft      draft-ietf-head-rift-kv-registry       February 2021
 
 
     0                   1                   2                   3
@@ -223,7 +223,7 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
 Head & Przygienda        Expires 26 August 2021                 [Page 4]
 
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+Internet-Draft      draft-ietf-head-rift-kv-registry       February 2021
 
 
     0                   1                   2                   3
@@ -279,7 +279,7 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
 Head & Przygienda        Expires 26 August 2021                 [Page 5]
 
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+Internet-Draft      draft-ietf-head-rift-kv-registry       February 2021
 
 
    The range of valid values is 1 - 16777215 (2^24-1).
@@ -335,7 +335,7 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
 Head & Przygienda        Expires 26 August 2021                 [Page 6]
 
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+Internet-Draft      draft-ietf-head-rift-kv-registry       February 2021
 
 
 3.4.1.  Requested Entries
@@ -391,7 +391,7 @@ Authors' Addresses
 
 Head & Przygienda        Expires 26 August 2021                 [Page 7]
 
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+Internet-Draft      draft-ietf-head-rift-kv-registry       February 2021
 
 
    Tony Przygienda
