@@ -13,11 +13,11 @@ Expires: 26 August 2021                                 22 February 2021
 
 Abstract
 
-   Routing in Fat-Trees ([RIFT]) allows for key/value pairs to be
+   Routing in Fat-Trees RIFT [RIFT] allows for key/value pairs to be
    advertised within Key-Value Topology Information Elements (KV TIEs).
-   The data contained within these KV TIEs can be used for absolutely
-   any purpose.  This document defines the various Key Types (i.e.
-   Well-Known, OUI, and Experimental) and a method to structure
+   The data contained within these KV TIEs can be used for any
+   imaginable purpose.  This document defines the various Key Types
+   (i.e.  Well-Known, OUI, and Experimental) and a method to structure
    corresponding values.
 
 Requirements Language
@@ -70,40 +70,40 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 Table of Contents
 
    1.  Description . . . . . . . . . . . . . . . . . . . . . . . . .   2
-   2.  Key-Value Pair Structure  . . . . . . . . . . . . . . . . . .   2
+   2.  Key-Value Pair Structure  . . . . . . . . . . . . . . . . . .   3
      2.1.  Well-Known Key Type . . . . . . . . . . . . . . . . . . .   3
      2.2.  OUI Key Type  . . . . . . . . . . . . . . . . . . . . . .   4
      2.3.  Experimental Key Type . . . . . . . . . . . . . . . . . .   4
-   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
+   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
      3.1.  Key Type Registry . . . . . . . . . . . . . . . . . . . .   5
        3.1.1.  Requested Entries . . . . . . . . . . . . . . . . . .   5
      3.2.  Experimental Key Type . . . . . . . . . . . . . . . . . .   5
-       3.2.1.  Requested Entries . . . . . . . . . . . . . . . . . .   5
-     3.3.  Well-Known Key Type . . . . . . . . . . . . . . . . . . .   5
+       3.2.1.  Requested Entries . . . . . . . . . . . . . . . . . .   6
+     3.3.  Well-Known Key Type . . . . . . . . . . . . . . . . . . .   6
        3.3.1.  Requested Entries . . . . . . . . . . . . . . . . . .   6
      3.4.  OUI Key Type  . . . . . . . . . . . . . . . . . . . . . .   6
-       3.4.1.  Requested Entries . . . . . . . . . . . . . . . . . .   6
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
+       3.4.1.  Requested Entries . . . . . . . . . . . . . . . . . .   7
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
    5.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   7
    6.  Normative References  . . . . . . . . . . . . . . . . . . . .   7
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Description
 
-   Routing in Fat-Trees ([RIFT]) allows for key/value pairs to be
+   Routing in Fat-Trees (RIFT [RIFT]) allows for key/value pairs to be
    advertised within Key-Value Topology Information Elements (KV TIEs).
-   There are absolutely no restrictions are placed on the type of data
-   that is contained in KV TIEs nor what the data is used for.  It could
-   contain a simple string or even Thrift encoded data.
+   There are no restrictions placed on the type of data that is
+   contained in KV TIEs nor what the data is used for.  It could contain
+   a simple string or even Thrift encoded data.  However, the KV
+   elements SHOULD NOT be used to carry topology information used by
+   RIFT itself to perform distributed computations.
 
-   This document also defines a Key Type Registry to maintain Well-Known
-   and vendor specific Key Types in order to simplify interoperability
+   This document defines a Key Type Registry to maintain Well-Known and
+   vendor specific Key Types in order to simplify interoperability
    between implementations and eliminate the risk of collision for
-   future implementations.  An Experimental Key Type is also defined.
+   future implementations.  An Experimental Key Type is additionally
+   defined.
 
-2.  Key-Value Pair Structure
-
-   Figure 1 illustrates the generic Key-Value Pair structure.
 
 
 
@@ -113,6 +113,10 @@ Head & Przygienda        Expires 26 August 2021                 [Page 2]
 
 Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
+
+2.  Key-Value Pair Structure
+
+   Figure 1 illustrates the generic Key-Value Pair structure.
 
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -138,9 +142,9 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
       Values:
          A variable length value that contains data associated with the
-         Key.  It SHOULD contain 1 or more elements.  All elements MUST
-         be contained in a tuple-like structure, that is to say it they
-         are ordered, allow for any data type and/or identical elements.
+         Key.  It SHOULD contain 1 or more elements.  Whether the
+         collection of elements allows duplicates and/or is ordered is
+         governed by the particular key identifier.
 
 2.1.  Well-Known Key Type
 
@@ -150,6 +154,21 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
    As shown in Figure 2, the Key-Type will be used to identify that the
    Key Type is Well-Known.  The Key Identifier will be used to identify
    the specific Key and describe the structure of the contained values.
+
+
+
+
+
+
+
+
+
+
+
+Head & Przygienda        Expires 26 August 2021                 [Page 3]
+
+Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+
 
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -162,22 +181,14 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
                        Figure 2: Well-Known Key Type
 
-
-
-
-Head & Przygienda        Expires 26 August 2021                 [Page 3]
-
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
-
-
 2.2.  OUI Key Type
 
    This section reserves a value in the Key Type Registry to indicate an
    OUI (vendor-specific) Key Type that any implementation MAY support.
 
-   As shown in Figure 3, the Key-Type will be used to identify that the
-   Key Type is OUI.  The Key Identifier MUST use an organization's
-   reserved OUI space to indicate the Key and value structure.
+   As shown in Figure 3, the Key-Type will be used to identify the Key
+   Type as OUI.  The Key Identifier MUST use an organization's reserved
+   OUI space to indicate the Key and value structure.
 
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -195,10 +206,25 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
    This section reserves a value in the Key Type Registry to indicate an
    Experimental Key Type.
 
-   As shown in Figure 4, the Key-Type will be used to identify that the
-   Key Type is Experimental.  The Key Identifier will be used to
-   identify the specific experimental Key and describe the structure of
-   the contained values.
+   As shown in Figure 4, the Key-Type will be used to identify the Key
+   Type as Experimental.  The Key Identifier will be used to identify
+   the specific experimental Key and describe the structure of the
+   contained values.
+
+
+
+
+
+
+
+
+
+
+
+Head & Przygienda        Expires 26 August 2021                 [Page 4]
+
+Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+
 
     0                   1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -219,27 +245,20 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
    All values not suggested are available for assignment.  The
    allocation of new values MUST be done via "Expert Review" procedures.
 
-
-
-Head & Przygienda        Expires 26 August 2021                 [Page 4]
-
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
-
-
 3.1.  Key Type Registry
 
    This section defines the Key Type Registry that is used to identify a
    specific Key Type.  It also suggests values for Experimental, Well-
    Known, and OUI Key Types.
 
-   The range of values is 0 - 255.
+   The range of valid values is 1 - 255.
 
    0 is an illegal value and MUST NOT be allocated to or used by any
-   implementation.
+   implementation.  It MUST be ignored on reception.
 
 3.1.1.  Requested Entries
 
-   +--------------+-------+-----------------------------------------+
+   +==============+=======+=========================================+
    | Key Type     | Value | Description                             |
    +==============+=======+=========================================+
    | Experimental |  TBD1 | Indicates that the Key is Experimental. |
@@ -255,14 +274,22 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
    This value indicates that a specific key is Experimental.
 
-   The range of values is 0 - 16777215 (2^24-1).
+
+
+
+Head & Przygienda        Expires 26 August 2021                 [Page 5]
+
+Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+
+
+   The range of valid values is 1 - 16777215 (2^24-1).
 
    0 is an illegal value and MUST NOT be allocated to or used by any
-   implementation.
+   implementation.  It MUST be ignored on reception.
 
 3.2.1.  Requested Entries
 
-   +------------------+------------+--------------+
+   +==================+============+==============+
    | Experimental Key | Identifier | Description  |
    +==================+============+==============+
    | Illegal          |          0 | Not allowed. |
@@ -274,22 +301,14 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
    This value indicates that a specific key is Well-Known.
 
-
-
-
-Head & Przygienda        Expires 26 August 2021                 [Page 5]
-
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
-
-
-   The range of values is 0 - 16777215 (2^24-1).
+   The range of valid values is 1 - 16777215 (2^24-1).
 
    0 is an illegal value and MUST not be allocated to or used by any
-   implementation.
+   implementation.  It MUST be ignored on reception.
 
 3.3.1.  Requested Entries
 
-   +----------------------------+------------+----------------+
+   +============================+============+================+
    | Well-Known Key             | Identifier | Description    |
    +============================+============+================+
    | Illegal                    |          0 | Not allowed.   |
@@ -306,14 +325,22 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
    This value indicates a specific OUI Key using an organization's
    reserved OUI space.
 
-   The range of values is 0 - 16777215 (2^24-1).
+   The range of valid values is 1 - 16777215 (2^24-1).
 
    0 is an illegal value and MUST NOT be allocated to or used by any
-   implementation.
+   implementation.  It MUST be ignored on reception.
+
+
+
+
+Head & Przygienda        Expires 26 August 2021                 [Page 6]
+
+Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+
 
 3.4.1.  Requested Entries
 
-   +---------+------------+--------------+
+   +=========+============+==============+
    | OUI Key | Identifier | Description  |
    +=========+============+==============+
    | Illegal |          0 | Not allowed. |
@@ -325,18 +352,8 @@ Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
 
    This document introduces no new security concerns to RIFT or other
    specifications referenced in this document given that the TIEs that
-   carry KV pairs are already extensively secured by the [RIFT]
+   carry KV pairs are already extensively secured by the RIFT [RIFT]
    specification itself.
-
-
-
-
-
-
-Head & Przygienda        Expires 26 August 2021                 [Page 6]
-
-Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
-
 
 5.  Acknowledgements
 
@@ -368,6 +385,15 @@ Authors' Addresses
    Email: jhead@juniper.net
 
 
+
+
+
+
+Head & Przygienda        Expires 26 August 2021                 [Page 7]
+
+Internet-Draft      draft-ietf-przygienda-kv-registry      February 2021
+
+
    Tony Przygienda
    Juniper Networks
    1137 Innovation Way
@@ -389,4 +415,34 @@ Authors' Addresses
 
 
 
-Head & Przygienda        Expires 26 August 2021                 [Page 7]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Head & Przygienda        Expires 26 August 2021                 [Page 8]
