@@ -278,7 +278,7 @@
         <name>Well-Known Key Type</name>
         <t>This value indicates that a specific key is Well-Known.</t>
         <t>The range of valid values is 1 - 16777215 (2^24-1).</t>
-        <t>0 is an illegal value and MUST not be allocated to or used by any 
+        <t>0 is an illegal value and MUST NOT be allocated to or used by any 
             implementation. It MUST be ignored on reception.</t>
         <section numbered="true" toc="default">
           <name>Requested Entries</name>
