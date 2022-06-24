@@ -1,0 +1,504 @@
+
+
+
+
+RIFT                                                        J. Head, Ed.
+Internet-Draft                                             T. Przygienda
+Intended status: Standards Track                        Juniper Networks
+Expires: 26 December 2022                                   24 June 2022
+
+
+                 RIFT Key/Value Structure and Registry
+                     draft-ietf-rift-kv-registry-01
+
+Abstract
+
+   The Routing in Fat-Trees [RIFT] protocol allows for key/value pairs
+   to be advertised within Key-Value Topology Information Elements (KV-
+   TIEs).  The data contained within these KV-TIEs can be used for any
+   imaginable purpose.  This document defines the various Key-Types
+   (i.e.  Well-Known, OUI, and Experimental) and a method to structure
+   corresponding values.
+
+Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [RFC2119].
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 26 December 2022.
+
+Copyright Notice
+
+   Copyright (c) 2022 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+
+
+Head & Przygienda       Expires 26 December 2022                [Page 1]
+
+Internet-Draft       draft-ietf-rift-kv-registry-01            June 2022
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Simplified BSD License text
+   as described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Description . . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Key Structure . . . . . . . . . . . . . . . . . . . . . . . .   2
+     2.1.  Experimental Key-Type . . . . . . . . . . . . . . . . . .   3
+     2.2.  Well-Known Key-Type . . . . . . . . . . . . . . . . . . .   4
+     2.3.  OUI Key-Type  . . . . . . . . . . . . . . . . . . . . . .   4
+   3.  Operational Considerations  . . . . . . . . . . . . . . . . .   5
+   4.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+     4.1.  RIFT Key-Type Registry  . . . . . . . . . . . . . . . . .   6
+       4.1.1.  RIFT Key-Type Registry Requested Entries  . . . . . .   6
+     4.2.  RIFT Well-Known Key-Type Registry . . . . . . . . . . . .   6
+       4.2.1.  RIFT Well-Known Key-Type Registry Requested
+               Entries . . . . . . . . . . . . . . . . . . . . . . .   7
+     4.3.  Expert Review Guidance  . . . . . . . . . . . . . . . . .   7
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
+   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   8
+   7.  Normative References  . . . . . . . . . . . . . . . . . . . .   8
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
+
+1.  Description
+
+   The Routing in Fat-Trees [RIFT] protocol allows for key/value pairs
+   to be advertised within Key-Value Topology Information Elements (KV-
+   TIEs).  There are no restrictions placed on the type of data that is
+   contained in KV-TIEs nor what the data is used for.
+
+   For example, it might be beneficial to advertise overlay protocol
+   state from leaf nodes to the Top-of-Fabric (ToF) nodes.  This would
+   make it possible to view critical state of a fabric-wide service from
+   a single ToF node rather than retrieving and reconciling the same
+   state from multiple leaf nodes.
+
+2.  Key Structure
+
+   This section describes the generic Key structure and semantics,
+   Figure 1 further illustrates these components.
+
+
+
+
+
+Head & Przygienda       Expires 26 December 2022                [Page 2]
+
+Internet-Draft       draft-ietf-rift-kv-registry-01            June 2022
+
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |   Key-Type    |                Key Identifier                 |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                      Values (variable)                        |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+                   Figure 1: Generic Key-Value Structure
+
+   *where:*
+
+      *Key-Type:*
+         A 1-byte value that identifies the Key-Type.  It MUST be a
+         reserved value from the RIFT Key-Type Registry that is defined
+         later in this document.
+
+         The range of valid values is 1 - 255 (2^8-1).
+
+         0 is an illegal value and MUST NOT be allocated to or used by
+         any implementation.  It MUST be ignored on receipt.
+
+      *Key Identifier:*
+         A 3-byte value that identifies the specific key and describes
+         the structure of the contained values.
+
+         The range of valid values is 1 - 16777215 (2^24-1).
+
+         0 is an illegal value and MUST NOT be allocated to or used by
+         any implementation.  It MUST be ignored on receipt.
+
+      *Values:*
+         A variable length value that contains data associated with the
+         Key Identifier.  It SHOULD contain 1 or more elements.  Whether
+         the collection of elements allows duplicates and/or is ordered
+         is governed by the particular Key Identifier's specification.
+
+2.1.  Experimental Key-Type
+
+   This section reserves a value in the RIFT Key-Type Registry to
+   indicate an Experimental Key-Type.
+
+   As shown in Figure 2, the Key-Type will be used to identify the Key-
+   Type as Experimental.  The Key Identifier will be used to identify
+   the specific key and describe the structure of the contained values.
+
+
+
+
+
+Head & Przygienda       Expires 26 December 2022                [Page 3]
+
+Internet-Draft       draft-ietf-rift-kv-registry-01            June 2022
+
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |       1       |          Experimental Key Identifier          |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                 Experimental Values (variable)                |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+                      Figure 2: Experimental Key-Type
+
+2.2.  Well-Known Key-Type
+
+   This section reserves a value in the RIFT Key-Type Registry to
+   indicate Well-Known Key-Types that all implementations SHOULD
+   support.
+
+   As shown in Figure 3, the Key-Type will be used to identify the Key-
+   Type as Well-Known.  The Key Identifier will be used to identify the
+   specific key and describe the structure of the contained values.
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |       2       |        Well-Known Key Identifier              |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                 Well-Known Values (variable)                  |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+                       Figure 3: Well-Known Key-Type
+
+2.3.  OUI Key-Type
+
+   This section reserves a value in the RIFT Key-Type Registry to
+   indicate an OUI (vendor-specific) Key-Type that any implementation
+   MAY support.
+
+   As shown in Figure 4, the Key-Type will be used to identify the Key-
+   Type as OUI.  The Key Identifier MUST use the implementing
+   organization's reserved OUI space to indicate the key and value
+   structure.
+
+
+
+
+
+
+
+
+
+Head & Przygienda       Expires 26 December 2022                [Page 4]
+
+Internet-Draft       draft-ietf-rift-kv-registry-01            June 2022
+
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |       3       |              OUI Key Identifier               |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |               Vendor Specific Values (variable)               |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+                           Figure 4: OUI Key-Type
+
+3.  Operational Considerations
+
+   While no restrictions are placed on Key-Value data or what it is used
+   for, it is RECOMMENDED that a serialized Thrift model be used for
+   simpler interoperability.  [RIFT-AUTO-EVPN] is an example of this
+   type of implementation.
+
+   Key-Value elements SHOULD NOT be used to carry topology information
+   used by RIFT itself to perform distributed computations.
+
+   In cases where KV-TIEs are flooded from north to south, policies
+   SHOULD be implemented in order to avoid network-wide flooding.
+
+   For networks with more than one ToF node, it is RECOMMENDED that
+   those ToF nodes contain identical KV-TIE information when being
+   distributed from north to south.  [RIFT] requires that only one KV-
+   TIE is selected when identical keys are received from multiple
+   northbound neighbors.  If this is not considered then the tie-
+   breaking rules may cause a node to select a suboptimal KV-TIE.
+   Consider a case where failure conditions cause the ToF nodes to
+   become split-brained.  While the Key-Type and Key Identifier will be
+   identical, the value(s) contained within may differ.  The node(s)
+   receiving these differing KV-TIEs will select the one from the ToF
+   node with the highest System ID, potentially leading to unintended
+   effects.
+
+4.  IANA Considerations
+
+   This section requests that IANA create two new registries the "RIFT
+   Key-Type" and "RIFT Well-Known Key-Type" registries in accordance
+   with [RFC8126].
+
+   Experts reviewing requests for new values to either registry MUST
+   consider the items in the Expert Review Guidance (Section 4.3)
+   section.
+
+
+
+
+
+Head & Przygienda       Expires 26 December 2022                [Page 5]
+
+Internet-Draft       draft-ietf-rift-kv-registry-01            June 2022
+
+
+   The following sections detail each registry's requirements and
+   suggested values.
+
+4.1.  RIFT Key-Type Registry
+
+   This section requests that IANA create and help govern the following
+   registry:
+
+      *Registry Name:*
+         RIFT Key-Type Registry
+
+      *Registration Procedures:*
+         Expert Review
+
+      *Description:*
+         Key-Type registry for the RIFT protocol.
+
+      *Reference:*
+         This document.
+
+4.1.1.  RIFT Key-Type Registry Requested Entries
+
+   This section requests that IANA register the following suggested
+   values to the "RIFT Key-Type Registry".
+
+   +-------+--------------+-----------------------------+-----------+
+   | Value | Key-Type     | Description                 | Status/   |
+   |       |              |                             | Reference |
+   +=======+==============+=============================+===========+
+   | 0     | Illegal      | Not allowed.                | This      |
+   |       |              |                             | document  |
+   +-------+--------------+-----------------------------+-----------+
+   | 1     | Experimental | Indicates that the Key-Type | This      |
+   |       |              | is Experimental.            | document. |
+   +-------+--------------+-----------------------------+-----------+
+   | 2     | Well-Known   | Indicates that the Key-Type | This      |
+   |       |              | is Well-Known.              | document. |
+   +-------+--------------+-----------------------------+-----------+
+   | 3     | OUI          | Indicates that the Key-Type | This      |
+   |       |              | is OUI (vendor specific).   | document. |
+   +-------+--------------+-----------------------------+-----------+
+
+                                Table 1
+
+4.2.  RIFT Well-Known Key-Type Registry
+
+   This section requests that IANA create and help govern the following
+   registry:
+
+
+
+Head & Przygienda       Expires 26 December 2022                [Page 6]
+
+Internet-Draft       draft-ietf-rift-kv-registry-01            June 2022
+
+
+      *Registry Name:*
+         RIFT Well-Known Key-Type Registry
+
+      *Registration Procedures:*
+         Expert Review
+
+      *Description:*
+         Well-Known Key-Type (2) registry for the RIFT protocol.
+
+      *Reference:*
+         This document.
+
+4.2.1.  RIFT Well-Known Key-Type Registry Requested Entries
+
+   This section requests that IANA register the following suggested
+   values to the "RIFT Well-Known Key-Type Registry".
+
+   +-------+----------------+----------------+------------------+
+   | Value | Key-Identifier | Description    | Status/Reference |
+   +=======+================+================+==================+
+   | 0     | Illegal        | Not allowed.   | This document.   |
+   +-------+----------------+----------------+------------------+
+   | 1     | MAC/IP Binding | To be defined. | To be defined.   |
+   +-------+----------------+----------------+------------------+
+   | 2     | FAM Security   | To be defined. | To be defined.   |
+   |       | Roll-Over Key  |                |                  |
+   +-------+----------------+----------------+------------------+
+
+                              Table 2
+
+4.3.  Expert Review Guidance
+
+   Experts reviewing requests for values from the RIFT Key-Type Registry
+   or the the the Well-Known RIFT Key-Type Registry are responsible for
+   the following:
+
+   1.  Determining the existence of a specification that clearly defines
+       the purpose supporting the request and MUST contain all required
+       fields for given registry.
+
+       The document MUST also be permenent and publically available.
+
+   2.  Ensuring that any requests are made available to the RIFT working
+       group for review should the work originate from outside of the
+       RIFT Working Group.
+
+
+
+
+
+
+Head & Przygienda       Expires 26 December 2022                [Page 7]
+
+Internet-Draft       draft-ietf-rift-kv-registry-01            June 2022
+
+
+   3.  Ensuring that any work produce outside of the IETF does not
+       conflict with any work that is already published or actively
+       pursuing being published.
+
+5.  Security Considerations
+
+   This document introduces no new security concerns to RIFT or other
+   specifications referenced in this document given that the Key-Value
+   TIEs are already extensively secured by the [RIFT] protocol
+   specification itself.
+
+6.  Acknowledgements
+
+   To be provided.
+
+7.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
+              Writing an IANA Considerations Section in RFCs", June
+              2017, <https://www.rfc-editor.org/info/rfc8126>.
+
+   [RIFT]     Przygienda, T., Sharma, A., Thubert, P., Rijsman, B., and
+              D. Afanasiev, "RIFT: Routing in Fat Trees", Work in
+              Progress, draft-ietf-rift-rift-15, July 2021.
+
+   [RIFT-AUTO-EVPN]
+              Head, J., Przygienda, T., and W. Lin, "RIFT Auto-EVPN",
+              Work in Progress, draft-head-rift-auto-evpn-02, March
+              2022.
+
+Authors' Addresses
+
+   Jordan Head (editor)
+   Juniper Networks
+   1137 Innovation Way
+   Sunnyvale, CA
+   United States of America
+
+   Email: jhead@juniper.net
+
+
+
+
+
+
+
+Head & Przygienda       Expires 26 December 2022                [Page 8]
+
+Internet-Draft       draft-ietf-rift-kv-registry-01            June 2022
+
+
+   Tony Przygienda
+   Juniper Networks
+   1137 Innovation Way
+   Sunnyvale, CA
+   United States of America
+
+   Email: prz@juniper.net
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Head & Przygienda       Expires 26 December 2022                [Page 9]
